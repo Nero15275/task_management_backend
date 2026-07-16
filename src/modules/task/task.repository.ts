@@ -7,7 +7,7 @@ export async function create(taskData: Partial<Task>): Promise<TaskDocument> {
 
 export async function findById(id: string): Promise<TaskDocument | null> {
   return TaskModel.findById(id)
-    .populate("assignedTo createdBy", "username email role reportsTo")
+    // .populate("assignedTo createdBy", "username email role reportsTo")
     .exec();
 }
 

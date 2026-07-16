@@ -46,13 +46,14 @@ export async function update(req: Request, res: Response, next: NextFunction): P
     if (!req.user) {
       throw new AppError("Unauthorized", HTTP_STATUS.UNAUTHORIZED);
     }
-
+    console.log("req.user", req.user);
+    console.log("req.params", req.params);
     const { id } = req.params;
     
 
     const task = await taskService.updateTask(
       { sub: req.user.sub, role: req.user.role },
-      id as string ,
+      id.toString(),
       req.body
     );
 
