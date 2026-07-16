@@ -5,6 +5,7 @@ import { HTTP_STATUS, RESPONSE_MESSAGE } from "@/common";
 import { CreateUserDto } from "@/modules/user/dto/createUser.dto";
 import { UpdateUserDto } from "@/modules/user/dto/updateUser.dto";
 import * as UserService from "@/modules/user/user.service";
+import { logger } from "@/config";
 
 export async function createUser(
   req: Request,
@@ -91,6 +92,24 @@ export async function deleteUser(
     res.status(HTTP_STATUS.OK).json({
       success: true,
       message: RESPONSE_MESSAGE.USER_DELETED,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getReportingUsers(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    console.log(`Fetching reporting users for user ID: ${req.user?.sub}`);
+    const users = await UserService.getReportingUsers(req.user!.sub);
+
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      data: users,
     });
   } catch (error) {
     next(error);

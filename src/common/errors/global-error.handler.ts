@@ -14,6 +14,7 @@ export const globalErrorHandler: ErrorRequestHandler = (
   res,
   _next
 ) => {
+  console.log("Global error handler invoked:", error);
   if (error instanceof AppError) {
     return res.status(error.statusCode).json({
       success: false,

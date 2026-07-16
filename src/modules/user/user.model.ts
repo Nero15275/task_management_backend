@@ -43,13 +43,20 @@ const userSchema = new Schema(
       default: UserRole.EMPLOYEE,
     },
 
+    reportsTo: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+      index: true,
+    },
+
     isActive: {
       type: Boolean,
       default: true,
     },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 

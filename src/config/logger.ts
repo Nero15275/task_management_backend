@@ -35,7 +35,7 @@ const consoleTransport =
 
 export const logger = pino(
   {
-    level: env.nodeEnv === "production" ? "info" : "debug",
+    level: "trace"                                        //env.nodeEnv === "production" ? "info" : "debug",
   },
   pino.multistream([
     ...(consoleTransport

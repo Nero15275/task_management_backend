@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Types } from "mongoose";
 import { UserRole } from "@/common";
 
 export const createUserSchema = z.object({
@@ -17,7 +18,16 @@ export const createUserSchema = z.object({
     .min(8, "Password must be at least 8 characters.")
     .max(128, "Password cannot exceed 128 characters."),
 
+
   role: z.enum(UserRole),
+
+  reportsTo: z
+    .string()
+    .refine((id) => Types.ObjectId.isValid(id), {
+      message: "Invalid reportsTo id",
+    })
+    .nullable()
+    .optional(),
 });
 
 export type CreateUserDto = z.infer<typeof createUserSchema>;

@@ -1,6 +1,7 @@
 import { CreateUserDto } from "@/modules/user/dto/createUser.dto";
 import { UpdateUserDto } from "@/modules/user/dto/updateUser.dto";
 import { User, UserDocument, UserModel } from "@/modules/user/user.model";
+import { Types } from "mongoose";
 
 
   export async function create(user: CreateUserDto): Promise<UserDocument> {
@@ -54,4 +55,22 @@ import { User, UserDocument, UserModel } from "@/modules/user/user.model";
     return (await UserModel.exists({ username })) !== null;
   }
 
-
+  export async function findByReportsTo(
+  reportsTo: string
+  ): Promise<User[]> {
+  return UserModel.aggregate([
+    {
+      $match: {
+        reportsTo: new Types.ObjectId(reportsTo),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "reportsTo",
+        as: "teamMembers",
+      },
+    },
+  ]);
+}

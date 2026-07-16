@@ -25,7 +25,7 @@ export function authenticate(
     const payload = JwtService.verifyAccessToken(token);
 
     req.user = {
-      id: payload.sub,
+      sub: payload.sub,
       role: payload.role,
     };
 

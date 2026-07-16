@@ -6,3 +6,4 @@ export * from "./errors/global-error.handler";
 export * from "./validators/validate.middleware";
 export * from "./middleware/authenticate.middleware";
 export * from "./middleware/authorize.middleware";
+export * from "./enums/task-status.enum";

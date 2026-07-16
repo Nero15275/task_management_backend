@@ -1,4 +1,5 @@
 import { AppError, HTTP_STATUS, RESPONSE_MESSAGE } from "@/common";
+import { logger } from "@/config/logger";
 import { CreateUserDto } from "@/modules/user/dto/createUser.dto";
 import { UpdateUserDto } from "@/modules/user/dto/updateUser.dto";
 import * as UserRepository from "@/modules/user/user.repository";
@@ -71,4 +72,19 @@ export async function deleteUser(id: string) {
   }
 
   await UserRepository.deleteById(id);
+}
+
+export async function getReportingUsers(userId: string) {
+  console.log(`Reporting users for user ID ${userId}`);
+  const users = await UserRepository.findByReportsTo(userId);
+  
+  console.log(`Reporting users for user ID ${userId}: ${users.map((u:any) => u.id).join(", ")}`);
+  if (!users.length) {
+    throw new AppError(
+      RESPONSE_MESSAGE.USER_NOT_FOUND,
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  return users;
 }

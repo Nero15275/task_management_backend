@@ -7,7 +7,7 @@ import * as JwtService from "./jwt/jwt.service";
 import * as PasswordService from "./password.service";
 import * as TokenService from "./jwt/token.service";
 import * as RefreshTokenRepository from "./refreshToken/refresh-token.repository";
-import { env } from "@/config";
+import { env, logger } from "@/config";
 import { JwtUserPayload } from "./jwt/jwt.service";
 
 
@@ -15,11 +15,12 @@ import { JwtUserPayload } from "./jwt/jwt.service";
 
 export async function register(payload: RegisterDto) {
   if (payload.role === UserRole.SUPER_ADMIN) {
-  throw new AppError(
-    RESPONSE_MESSAGE.INVALID_ROLE,
-    HTTP_STATUS.FORBIDDEN
-  );
+    throw new AppError(
+      RESPONSE_MESSAGE.INVALID_ROLE,
+      HTTP_STATUS.FORBIDDEN
+    );
   }
+
   if (await UserRepository.emailExists(payload.email)) {
     throw new AppError(
       RESPONSE_MESSAGE.EMAIL_ALREADY_EXISTS,
@@ -34,22 +35,24 @@ export async function register(payload: RegisterDto) {
     );
   }
 
-  const hashedPassword = await PasswordService.hashPassword(
-    payload.password
-  );
+  await validateReportingHierarchy(payload);
+
+  const hashedPassword = await PasswordService.hashPassword(payload.password);
 
   const user = await UserRepository.create({
-  ...payload,
-  password: hashedPassword,
-});
+    ...payload,
+    password: hashedPassword,
+  });
 
-const { password, ...safeUser } = user.toObject();
+  const { password, ...safeUser } = user.toObject();
 
-return safeUser;
+  return safeUser;
 }
+
 
 export async function login(payload: LoginDto) {
   const user = await UserRepository.findByEmail(payload.email);
+  logger.info(`User found: ${user?.email}, Active: ${user?.isActive}`);
   if (!user?.isActive) {
   throw new AppError(
     RESPONSE_MESSAGE.USER_DISABLED,
@@ -150,4 +153,37 @@ export async function logout(refreshToken: string) {
   const tokenHash = TokenService.hashToken(refreshToken);
 
   await RefreshTokenRepository.deleteByTokenHash(tokenHash);
+}
+
+async function validateReportingHierarchy(payload: RegisterDto) {
+  if (!payload.reportsTo) return;
+
+  const reportingUser = await UserRepository.findById(payload.reportsTo);
+
+  if (!reportingUser) {
+    throw new AppError(
+      RESPONSE_MESSAGE.USER_NOT_FOUND,
+      HTTP_STATUS.NOT_FOUND
+    );
+  }
+
+  switch (payload.role) {
+    case UserRole.TEAM_LEAD:
+      if (reportingUser.role !== UserRole.MANAGER) {
+        throw new AppError(
+          "Team Lead must report to a Manager",
+          HTTP_STATUS.BAD_REQUEST
+        );
+      }
+      break;
+
+    case UserRole.EMPLOYEE:
+      if (reportingUser.role !== UserRole.TEAM_LEAD) {
+        throw new AppError(
+          "Employee must report to a Team Lead",
+          HTTP_STATUS.BAD_REQUEST
+        );
+      }
+      break;
+  }
 }

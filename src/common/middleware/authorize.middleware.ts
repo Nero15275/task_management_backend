@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { AppError, HTTP_STATUS, RESPONSE_MESSAGE, UserRole } from "@/common";
+import { logger } from "@/config/logger";
 
 export function authorize(...roles: UserRole[]) {
   return (
@@ -8,6 +9,7 @@ export function authorize(...roles: UserRole[]) {
     _res: Response,
     next: NextFunction
   ) => {
+    logger.debug(`Authorizing user with role: ${req.user?.role}`);
     if (!req.user) {
       return next(
         new AppError(
