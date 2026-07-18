@@ -4,21 +4,31 @@ import { z } from "zod";
 import { UserRole } from "@/common/enums/user-role.enum";
 
 export const registerSchema = z.object({
-  username: z.string().trim().min(3).max(30),
+  username: z
+    .string()
+    .trim()
+    .min(3, "Username must be at least 3 characters.")
+    .max(30, "Username cannot exceed 30 characters."),
 
-  email: z.email().transform((v) => v.toLowerCase().trim()),
+  email: z
+    .email("Invalid email address.")
+    .transform((email) => email.toLowerCase().trim()),
 
-  password: z.string().min(8).max(128),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters.")
+    .max(128, "Password cannot exceed 128 characters."),
 
-  role: z.nativeEnum(UserRole),
+
+  role: z.enum(UserRole),
 
   reportsTo: z
     .string()
     .refine((id) => Types.ObjectId.isValid(id), {
-      message: "Invalid manager/team lead id",
+      message: "Invalid reportsTo id",
     })
-    .optional()
-    .nullable(),
+    .nullable()
+    .optional(),
 });
 
 export type RegisterDto = z.infer<typeof registerSchema>;

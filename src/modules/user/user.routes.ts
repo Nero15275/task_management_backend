@@ -15,7 +15,12 @@ router.get(
   authorize(UserRole.MANAGER),
   UserController.getAllUsers,
 );
-
+router.get(
+  "/managers",
+  authenticate,
+  authorize(UserRole.SUPER_ADMIN),
+  UserController.getManagers,
+);
 router.get(
   "/reporting",
   authenticate,
@@ -25,7 +30,7 @@ router.get(
 
 router.get("/:id", UserController.getUserById);
 
-router.put(
+router.patch(
   "/:id",
   authenticate,
   validate(updateUserSchema),
@@ -35,7 +40,7 @@ router.put(
 router.delete(
   "/:id",
   authenticate,
-  authorize(UserRole.MANAGER, UserRole.TEAM_LEAD),
+  authorize(UserRole.MANAGER, UserRole.TEAM_LEAD,UserRole.SUPER_ADMIN),
   UserController.deleteUser,
 );
 

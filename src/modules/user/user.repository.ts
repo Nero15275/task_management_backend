@@ -1,3 +1,4 @@
+import { UserRole } from "@/common";
 import { CreateUserDto } from "@/modules/user/dto/createUser.dto";
 import { UpdateUserDto } from "@/modules/user/dto/updateUser.dto";
 import { User, UserDocument, UserModel } from "@/modules/user/user.model";
@@ -21,8 +22,14 @@ import { Types } from "mongoose";
   }
 
   export async function findAll(): Promise<UserDocument[]> {
-    return UserModel.find().exec();
+  return UserModel.find({
+    role: { $ne: UserRole.SUPER_ADMIN },
+  }).exec();
+}
+  export async function findManagers(): Promise<UserDocument[]> {
+    return UserModel.find({role:UserRole.MANAGER}).exec();
   }
+
 
   export async function updateById(
     id: string,

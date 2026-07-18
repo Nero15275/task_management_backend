@@ -59,6 +59,22 @@ export async function getAllUsers(
     next(error);
   }
 }
+export async function getManagers(
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const users = await UserService.getManagers();
+
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      data: users,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 
 export async function updateUser(
   req: Request,

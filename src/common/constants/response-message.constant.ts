@@ -20,4 +20,5 @@ export const RESPONSE_MESSAGE = {
   LOGIN_SUCCESS: "Login successful.",
   TOKEN_REFRESHED: "Token refreshed successfully.",
   INVALID_ACCESS_TOKEN: "Invalid access token.",
+  "MALFORMED_JSON": "Malformed JSON payload. Please check your syntax (missing commas, unclosed quotes, etc.).",
 } as const;

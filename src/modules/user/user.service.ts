@@ -1,8 +1,11 @@
 import { AppError, HTTP_STATUS, RESPONSE_MESSAGE } from "@/common";
 import { logger } from "@/config/logger";
+import * as PasswordService  from "@/modules/auth/password.service";
 import { CreateUserDto } from "@/modules/user/dto/createUser.dto";
 import { UpdateUserDto } from "@/modules/user/dto/updateUser.dto";
 import * as UserRepository from "@/modules/user/user.repository";
+
+
 
 export async function createUser(payload: CreateUserDto) {
   const emailExists = await UserRepository.findByEmail(payload.email);
@@ -44,6 +47,10 @@ export async function getUserById(id: string) {
 export async function getAllUsers() {
   return UserRepository.findAll();
 }
+export async function getManagers() {
+  return UserRepository.findManagers();
+}
+
 
 export async function updateUser(
   id: string,
@@ -57,6 +64,17 @@ export async function updateUser(
       HTTP_STATUS.NOT_FOUND
     );
   }
+  if(payload.password){
+      {
+        const hashedPassword = await PasswordService.hashPassword(payload.password);
+
+     payload={...payload,
+      password: hashedPassword,}
+    }
+  }
+   
+  
+    
 
   return UserRepository.updateById(id, payload);
 }
@@ -70,6 +88,7 @@ export async function deleteUser(id: string) {
       HTTP_STATUS.NOT_FOUND
     );
   }
+  
 
   await UserRepository.deleteById(id);
 }
