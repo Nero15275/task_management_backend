@@ -127,17 +127,20 @@ npm install
 Create a `.env` file.
 
 ```env
-PORT=5000
-
-MONGO_URI=
-
-JWT_ACCESS_SECRET=
-JWT_REFRESH_SECRET=
-
-ACCESS_TOKEN_EXPIRES_IN=15m
-REFRESH_TOKEN_EXPIRES_IN=7d
+PORT=3000
 
 NODE_ENV=development
+
+MONGODB_URI=
+
+JWT_ACCESS_SECRET=jwtdevaccesssecretwdawdawdwadawdawdawddawdawdawdwavfvdfvfd
+JWT_REFRESH_SECRET=jwtdevrefreshsecretdawdawdawdwadawdawdawdawdawbgbgbgggbbg
+JWT_ACCESS_EXPIRES_IN=1d
+JWT_REFRESH_EXPIRES_IN=7d
+
+SUPER_ADMIN_USERNAME=Super Admin
+SUPER_ADMIN_EMAIL=admin@example.com
+SUPER_ADMIN_PASSWORD=Admin@123
 ```
 
 ---
