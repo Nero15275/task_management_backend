@@ -8,6 +8,7 @@ import pinoHttp from "pino-http";
 import routes from "./routes";
 import { logger } from "./config/logger";
 import { globalErrorHandler } from "@/common";
+import { env } from "./config";
 
 const app = express();
 
@@ -43,7 +44,7 @@ app.use(pinoHttp({ logger,
 app.use(helmet());
 
 app.use(cors({
-  origin: true,
+  origin: env.clientUrl,
   credentials: true
 }));
 
