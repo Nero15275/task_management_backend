@@ -2,7 +2,12 @@ import { Types } from "mongoose";
 import { Task, TaskDocument, TaskModel } from "./task.model";
 
 export async function create(taskData: Partial<Task>): Promise<TaskDocument> {
-  return TaskModel.create(taskData);
+    const task = await TaskModel.create(taskData);
+
+  return task.populate(
+    "assignedTo createdBy",
+    "username email role reportsTo"
+  );
 }
 
 export async function findById(id: string): Promise<TaskDocument | null> {
@@ -26,19 +31,19 @@ export async function findByAssignedUsers(userIds: string[]): Promise<TaskDocume
     .exec();
 }
 
-export async function updateById(
-  id: string,
-  data: Partial<Task>
-): Promise<TaskDocument | null> {
-  return TaskModel.findByIdAndUpdate(id, data, {
-    new: true,
-    runValidators: true,
-  })
-    .populate("assignedTo createdBy", "username email role reportsTo")
-    .exec();
-}
+  export async function updateById(
+    id: string,
+    data: Partial<Task>
+  ): Promise<TaskDocument | null> {
+    return TaskModel.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    })
+      .populate("assignedTo createdBy", "username email role reportsTo")
+      .exec();
+  }
 
-export async function deleteById(id: string): Promise<boolean> {
+export async function deleteById(id: string): Promise<TaskDocument|null> {
   const result = await TaskModel.findByIdAndDelete(id).exec();
-  return result !== null;
+  return result ;
 }

@@ -165,7 +165,7 @@ export async function updateTask(
 export async function deleteTask(
   user: { sub: string; role: UserRole },
   taskId: string,
-): Promise<boolean> {
+): Promise<TaskDocument|null> {
   const task = await taskRepository.findById(taskId);
   if (!task) {
     throw new AppError("Task not found", HTTP_STATUS.NOT_FOUND);

@@ -13,10 +13,12 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(32),
   JWT_ACCESS_EXPIRES_IN: z.string(),
   JWT_REFRESH_EXPIRES_IN: z.string(),
+  CLIENT_URL: z.string(),
 
   SUPER_ADMIN_USERNAME: z.string().default("Super Admin"),
   SUPER_ADMIN_EMAIL: z.string().email(),
   SUPER_ADMIN_PASSWORD: z.string().min(8),
+  
 
   NODE_ENV: z
     .enum(["development", "production", "test"])
@@ -35,6 +37,7 @@ export const env = {
   jwtRefreshSecret: parsed.JWT_REFRESH_SECRET,
   jwtAccessExpiresIn: parsed.JWT_ACCESS_EXPIRES_IN,
   jwtRefreshExpiresIn: parsed.JWT_REFRESH_EXPIRES_IN,
+  clientUrl: parsed.CLIENT_URL,
 
   superAdminUsername: parsed.SUPER_ADMIN_USERNAME,
   superAdminEmail: parsed.SUPER_ADMIN_EMAIL,

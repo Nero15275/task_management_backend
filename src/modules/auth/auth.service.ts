@@ -53,18 +53,21 @@ export async function register(payload: RegisterDto) {
 export async function login(payload: LoginDto) {
   const user = await UserRepository.findByEmail(payload.email);
   logger.info(`User found: ${user?.email}, Active: ${user?.isActive}`);
+  console.log("in login",user)
+   if (!user) {
+    throw new AppError(
+      RESPONSE_MESSAGE.INVALID_CREDENTIALS,
+      HTTP_STATUS.UNAUTHORIZED
+    );
+  }
+  
   if (!user?.isActive) {
   throw new AppError(
     RESPONSE_MESSAGE.USER_DISABLED,
     HTTP_STATUS.FORBIDDEN
   );
 }
-  if (!user) {
-    throw new AppError(
-      RESPONSE_MESSAGE.INVALID_CREDENTIALS,
-      HTTP_STATUS.UNAUTHORIZED
-    );
-  }
+ 
 
   const isPasswordValid = await PasswordService.comparePassword(
     payload.password,
